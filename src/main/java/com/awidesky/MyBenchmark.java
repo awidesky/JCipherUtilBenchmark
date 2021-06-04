@@ -60,10 +60,10 @@ import org.openjdk.jmh.infra.Blackhole;
 @Fork(value = 2)
 public class MyBenchmark {
 
-	@Param({ "10000000" })
-	private int N;
+    @Param({ "10000000" })
+    private int N;
 
- 	@Setup(Level.Trial)
+    @Setup(Level.Trial)
     public void setup() {
         //setup
     }
