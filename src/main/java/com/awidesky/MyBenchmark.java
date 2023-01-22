@@ -49,6 +49,18 @@ import org.openjdk.jmh.infra.Blackhole;
 
 /*
  * mvn archetype:generate -DinteractiveMode=false -DarchetypeGroupId=org.openjdk.jmh -DarchetypeArtifactId=jmh-java-benchmark-archetype -DgroupId=com.awidesky -DartifactId=BenchmarkStub -Dversion=1.0
+ *
+ * 
+ * Step 1: build Maven project
+ *  1. Right click on project,
+ *  2. Select Run As,
+ *  3. Select Maven Build and specify goals as clean install
+ * 
+ * Step 2: run tests
+ * 1. Right click on project,
+ * 2. Select Run As,
+ * 3. Select Java Application and choose either Main - org.openjdk.jmh or the main you created
+ * 
  * */
 
 @Warmup(iterations = 3) 		// Warmup Iteration = 3
