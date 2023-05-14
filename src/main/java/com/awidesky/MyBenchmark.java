@@ -1,4 +1,5 @@
 /*
+ * ===================== Original Benchmark stub License =====================
  * Copyright (c) 2014, Oracle America, Inc.
  * All rights reserved.
  *
