@@ -32,6 +32,7 @@
 
 package io.github.awidesky.jCipherUtilBenchmark;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -41,12 +42,16 @@ import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
+
+import io.github.awidesky.jCipherUtil.AbstractCipherUtil;
+import io.github.awidesky.jCipherUtil.cipher.symmetric.aes.AESKeySize;
+import io.github.awidesky.jCipherUtil.cipher.symmetric.aes.AES_GCMCipherUtil;
+import io.github.awidesky.jCipherUtil.messageInterface.InPut;
 
 /*
  * mvn archetype:generate -DinteractiveMode=false -DarchetypeGroupId=org.openjdk.jmh -DarchetypeArtifactId=jmh-java-benchmark-archetype -DgroupId=io.github.awidesky.jCipherUtilBenchmark -DartifactId=BenchmarkStub -Dversion=1.0
@@ -64,26 +69,48 @@ import org.openjdk.jmh.infra.Blackhole;
  * 
  * */
 
-@Warmup(iterations = 3) 		// Warmup Iteration = 3
-@Measurement(iterations = 5)
+@Warmup(iterations = 1)
+@Measurement(iterations = 2)
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Thread)
-@Fork(value = 2)
+@Fork(value = 1)
 public class MyBenchmark {
 
-    @Param({ "10000000" })
-    private int N;
-
+    private static byte[] plain = new byte[32 * 1024 * 1024];
+    private static byte[] encrypted;
+    
     @Setup(Level.Trial)
-    public void setup() {
-        //setup
+    public static void genData() {
+    	new Random().nextBytes(plain);
+    	encrypted = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray()).encryptToSingleBuffer(InPut.from(plain));
     }
-	 
+    
     @Benchmark
-    public void test(Blackhole bh) {
-    	//benchmark
+    public void original_encrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	c.engine = false;
+    	bh.consume(c.encryptToSingleBuffer(InPut.from(plain)));
+    }
+    @Benchmark
+    public void original_decrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	c.engine = false;
+    	bh.consume(c.decryptToSingleBuffer(InPut.from(encrypted)));
+    }
+    
+    @Benchmark
+    public void engine_encrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	c.engine = true;
+    	bh.consume(c.encryptToSingleBuffer(InPut.from(plain)));
+    }
+    @Benchmark
+    public void engine_decrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	c.engine = true;
+    	bh.consume(c.decryptToSingleBuffer(InPut.from(encrypted)));
     }
     
 
