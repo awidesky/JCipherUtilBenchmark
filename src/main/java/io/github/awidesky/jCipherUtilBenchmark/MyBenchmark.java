@@ -115,3 +115,21 @@ public class MyBenchmark {
     
 
 }
+
+
+/*
+
+
+Benchmark                                          Mode  Cnt     Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  2604.158          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  2648.704          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  2545.077          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  2585.176          ms/op
+
+
+Benchmark                                          Mode  Cnt     Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  2621.669          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  2556.853          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  2631.344          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  2599.603          ms/op
+ */
