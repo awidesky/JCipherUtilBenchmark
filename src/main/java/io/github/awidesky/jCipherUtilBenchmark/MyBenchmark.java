@@ -119,7 +119,7 @@ public class MyBenchmark {
 
 /*
 
-
+M2 Mac:
 Benchmark                                          Mode  Cnt     Score   Error  Units
 jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  2604.158          ms/op
 jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  2648.704          ms/op
@@ -132,4 +132,19 @@ jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  2621.669          
 jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  2556.853          ms/op
 jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  2631.344          ms/op
 jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  2599.603          ms/op
+
+
+7500F:
+Benchmark                                          Mode  Cnt    Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  746.815          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  420.551          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  722.208          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  422.172          ms/op
+
+
+Benchmark                                          Mode  Cnt    Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  750.734          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  427.570          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  712.423          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  431.535          ms/op
  */
