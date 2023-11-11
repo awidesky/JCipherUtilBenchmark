@@ -69,16 +69,16 @@ import io.github.awidesky.jCipherUtil.messageInterface.InPut;
  * 
  * */
 
-@Warmup(iterations = 1)
-@Measurement(iterations = 2)
+@Warmup(iterations = 2)
+@Measurement(iterations = 3)
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Thread)
-@Fork(value = 1)
+@Fork(value = 2)
 public class MyBenchmark {
 
-    private static byte[] plain = new byte[32 * 1024 * 1024];
+    private static byte[] plain = new byte[1 * 1024 * 1024];
     private static byte[] encrypted;
     
     @Setup(Level.Trial)
