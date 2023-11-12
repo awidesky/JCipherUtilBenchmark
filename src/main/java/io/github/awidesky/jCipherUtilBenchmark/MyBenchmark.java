@@ -70,7 +70,7 @@ import io.github.awidesky.jCipherUtil.messageInterface.InPut;
  * */
 
 @Warmup(iterations = 2)
-@Measurement(iterations = 3)
+@Measurement(iterations = 2)
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -147,4 +147,13 @@ jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  750.734          m
 jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  427.570          ms/op
 jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  712.423          ms/op
 jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  431.535          ms/op
+
+
+
+-------------------------------after init*() rewritten-------------------------------
+Benchmark                                          Mode  Cnt    Score     Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    6  400.920 ±  24.617  ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    6  413.677 ±  15.995  ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    6  418.945 ± 136.495  ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    6  410.134 ±   9.251  ms/op
  */
