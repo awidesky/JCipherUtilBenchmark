@@ -32,6 +32,10 @@
 
 package io.github.awidesky.jCipherUtilBenchmark;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -49,8 +53,9 @@ import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
 import io.github.awidesky.jCipherUtil.AbstractCipherUtil;
+import io.github.awidesky.jCipherUtil.cipher.symmetric.SymmetricCipherUtilBuilder;
 import io.github.awidesky.jCipherUtil.cipher.symmetric.aes.AESKeySize;
-import io.github.awidesky.jCipherUtil.cipher.symmetric.aes.AES_GCMCipherUtil;
+import io.github.awidesky.jCipherUtil.cipher.symmetric.aes.AES_ECBCipherUtil;
 import io.github.awidesky.jCipherUtil.messageInterface.InPut;
 
 /*
@@ -69,8 +74,8 @@ import io.github.awidesky.jCipherUtil.messageInterface.InPut;
  * 
  * */
 
-@Warmup(iterations = 2)
-@Measurement(iterations = 2)
+@Warmup(iterations = 0)
+@Measurement(iterations = 1)
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -78,42 +83,59 @@ import io.github.awidesky.jCipherUtil.messageInterface.InPut;
 @Fork(value = 2)
 public class MyBenchmark {
 
-    private static byte[] plain = new byte[1 * 1024 * 1024];
+    private static byte[] plain = new byte[4 * 1024 * 1024];
     private static byte[] encrypted;
     
-    @Setup(Level.Trial)
-    public static void genData() {
-    	new Random().nextBytes(plain);
-    	encrypted = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray()).encryptToSingleBuffer(InPut.from(plain));
-    }
+    private static final SymmetricCipherUtilBuilder<?> b = new AES_ECBCipherUtil.Builder(AESKeySize.SIZE_128);
+    private static InPut p;
+    private static InPut e;
+    private static Path pFile;
+    private static Path eFile; 
     
-    @Benchmark
-    public void original_encrypt(Blackhole bh) throws Exception {
-    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
-    	c.engine = false;
-    	bh.consume(c.encryptToSingleBuffer(InPut.from(plain)));
+    @Setup(Level.Trial)
+    public static void genData() throws IOException {
+    	new Random().nextBytes(plain);
+    	encrypted = b.build("Hello, World!".toCharArray()).encryptToSingleBuffer(InPut.from(plain));
+    	pFile = Files.createTempFile("plain", null);
+    	eFile = Files.createTempFile("encrypt", null);
+    	Files.write(pFile, plain);
+    	Files.write(eFile, encrypted);
+    	p = InPut.from(plain);
+    	e = InPut.from(encrypted);
     }
-    @Benchmark
-    public void original_decrypt(Blackhole bh) throws Exception {
-    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
-    	c.engine = false;
-    	bh.consume(c.decryptToSingleBuffer(InPut.from(encrypted)));
-    }
+
+	@Setup(Level.Invocation)
+	public static void setInputs() throws FileNotFoundException {
+		p = InPut.from(pFile.toFile());
+		e = InPut.from(eFile.toFile());
+	}
     
     @Benchmark
     public void engine_encrypt(Blackhole bh) throws Exception {
-    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	AbstractCipherUtil c = b.build("Hello, World!".toCharArray());
     	c.engine = true;
-    	bh.consume(c.encryptToSingleBuffer(InPut.from(plain)));
+    	bh.consume(c.encryptToSingleBuffer(p));
     }
     @Benchmark
     public void engine_decrypt(Blackhole bh) throws Exception {
-    	AbstractCipherUtil c = new AES_GCMCipherUtil.Builder(AESKeySize.SIZE_128).build("Hello, World!".toCharArray());
+    	AbstractCipherUtil c = b.build("Hello, World!".toCharArray());
     	c.engine = true;
-    	bh.consume(c.decryptToSingleBuffer(InPut.from(encrypted)));
+    	bh.consume(c.decryptToSingleBuffer(e));
     }
     
-
+    
+    @Benchmark
+    public void original_encrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = b.build("Hello, World!".toCharArray());
+    	c.engine = false;
+    	bh.consume(c.encryptToSingleBuffer(p));
+    }
+    @Benchmark
+    public void original_decrypt(Blackhole bh) throws Exception {
+    	AbstractCipherUtil c = b.build("Hello, World!".toCharArray());
+    	c.engine = false;
+    	bh.consume(c.decryptToSingleBuffer(e));
+    }
 }
 
 
@@ -156,4 +178,36 @@ jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    6  400.920 ±  24.617
 jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    6  413.677 ±  15.995  ms/op
 jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    6  418.945 ± 136.495  ms/op
 jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    6  410.134 ±   9.251  ms/op
+
+
+Benchmark                                          Mode  Cnt     Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2   979.069          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  1013.136          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2   914.981          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  1000.383          ms/op
+
+Benchmark                                          Mode  Cnt     Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2   963.686          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  1007.763          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2   929.880          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  1006.198          ms/op
+
+
+
+Benchmark                                          Mode  Cnt    Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  982.636          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  988.934          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  972.552          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  966.361          ms/op
+
+Benchmark                                          Mode  Cnt     Score   Error  Units
+jCipherUtilBenchmark.MyBenchmark.engine_decrypt    avgt    2  1785.134          ms/op
+jCipherUtilBenchmark.MyBenchmark.engine_encrypt    avgt    2  1872.761          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_decrypt  avgt    2  1809.077          ms/op
+jCipherUtilBenchmark.MyBenchmark.original_encrypt  avgt    2  1863.496          ms/op
+
+     * it just isn't stable - the result bounce a lot. I'll just consider
+     * the performance difference between engine version and original version
+     * is trivial.
+     *
  */
